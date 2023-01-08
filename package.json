@@ -22,7 +22,10 @@
   "homepage": "https://gitlab.com/soict-it4409/20221/group6/library_management#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongoose": "^6.8.1",
+    "jsonwebtoken": "^8.5.1",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
