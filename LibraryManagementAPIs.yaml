@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  description: Api of web library project
+  version: 1.0.0
+  title: Library REST APIs
+  contact:
+    name: Trinh Dat
+    email: trinhdat260901@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  /books:
+    get:
+      tags:
+        - book
+      summary: Get all book
+      operationId: getBook
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+
+    post:
+      tags:
+        - book
+      summary: Add a new book to the library
+      description: Add a new book to the library
+      operationId: addBook
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                coverType:
+                  type: string
+                  enum:
+                    - paperback
+                    - case wrap
+                    - paperback
+                status:
+                  type: string
+                  enum:
+                    - available
+                    - pending
+                    - borrowed
+                detail:
+                  $ref: '#/components/schemas/BookDetail'
+                coverImage:
+                  type: string
+                  format: base64
+            encoding: # The same level as schema
+              coverImage: # Property name (see above)
+                contentType: image/png, image/jpeg
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '405':
+          description: Invalid input
+
+  /books/filter:
+    get:
+      tags:
+        - book
+      summary: Get book by tags
+      operationId: getBookByTags
+      parameters:
+        - name: catagory
+          in: query
+          schema:
+            type: string
+            enum:
+              - Essays
+              - Case Studies
+              - Syllabus
+              - Thesis
+        - name: subject
+          in: query
+          schema:
+            type: string
+            enum:
+              - Art
+              - Language
+              - Literature
+              - Gymnastics
+              - Physics
+              - Chemistry
+              - Biology
+              - Math
+              - History
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid tags value
+
+  /books/{bookId}:
+    get:
+      tags:
+        - book
+      summary: Find book by ID
+      description: Returns a single book
+      operationId: getBookById
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of book to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Book not found
+    put:
+      tags:
+        - book
+      summary: Update an existing book
+      operationId: updateBookById
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of book to return
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                allof:
+                  $ref: '#/components/schemas/Book'
+                coverImage:
+                  type: string
+                  format: base64
+            encoding:
+              coverImage:
+                contentType: image/png, image/jpeg
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Book not found
+        '405':
+          description: Validation exception
+    delete:
+      tags:
+        - book
+      summary: Deletes a book
+      description: delete a book
+      operationId: deleteBook
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: bookId
+          in: path
+          description: book id to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid book value
+
+  /borrow:
+    get:
+      tags:
+        - borrow
+      summary: Get all borrow request
+      operationId: getBorrowRequest
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Borrow'
+    post:
+      tags:
+        - borrow
+      summary: Create a new borrow request
+      operationId: addBookRequest
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: bookId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrow'
+        '405':
+          description: Invalid input
+    put:
+      tags:
+        - borrow
+      summary: Update an existing borrow request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Borrow'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Book not found
+        '405':
+          description: Validation exception
+
+  /borrow/{readerId}:
+    get:
+      tags:
+        - borrow
+      summary: Get an reader's borrow requests
+      operationId: getBorrowRequestByBorrowerId
+      parameters:
+        - name: readerId
+          in: path
+          description: 'The name that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Borrow'
+
+  /reader:
+    get:
+      tags:
+        - reader
+      summary: Get all reader
+      operationId: getReader
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reader'
+
+    post:
+      tags:
+        - reader
+      summary: Creat a new reader
+      operationId: addReader
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reader'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+        '405':
+          description: Invalid input
+
+  /admin/login:
+    get:
+      tags:
+        - admin
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  password:
+                    type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+
+  /admin/logout:
+    post:
+      tags:
+        - admin
+      summary: log out admin
+      description: ''
+      operationId: loginUser
+      responses:
+        '200':
+          description: successful operation
+
+  /admin/signup:
+    post:
+      tags:
+        - admin
+      summary: register
+      description: ''
+      operationId: signupUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '400':
+          description: Invalid username/password supplied
+        '401':
+          description: Account exist
+        '201':
+          description: successful operation
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        _id:
+          type: string
+        dayAdded:
+          type: string
+          format: date
+        coverType:
+          type: string
+          enum:
+            - paperback
+            - case wrap
+            - paperback
+        status:
+          type: string
+          enum:
+            - available
+            - pending
+            - borrowed
+        detail:
+          $ref: '#/components/schemas/BookDetail'
+
+    BookDetail:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        coverId:
+          type: string
+        overview:
+          type: string
+        category:
+          type: string
+          enum:
+            - Essays
+            - Case Studies
+            - Syllabus
+            - Thesis
+        subject:
+          type: string
+          enum:
+            - Art
+            - Language
+            - Literature
+            - Gymnastics
+            - Physics
+            - Chemistry
+            - Biology
+            - Math
+            - History
+        author:
+          type: string
+        publisher:
+          type: string
+        publishingDate:
+          type: string
+          format: date
+        ISBN:
+          type: string
+
+    Borrow:
+      type: object
+      properties:
+        _id:
+          type: string
+        borrower:
+          $ref: '#/components/schemas/Reader'
+        book:
+          $ref: '#/components/schemas/Book'
+        at:
+          type: string
+          format: date
+        isReturned:
+          type: boolean
+
+    Reader:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        studentId:
+          type: string
+        school:
+          type: string
+        email:
+          type: string
+
+    Admin:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
