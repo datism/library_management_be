@@ -1,8 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import * as mongoose from "mongoose";
-// import dotenv from 'dotenv';
-//
-// dotenv.config();
+import dotenv from 'dotenv';
+import {routes} from "./routes";
+import bodyParser from "body-parser";
+dotenv.config();
 
 const app: Express = express();
 const port = 8000;
@@ -11,6 +12,11 @@ const port = 8000;
 app.get('/', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server');
 })
+
+app.use(bodyParser.json())
+
+// routes
+app.use('/', routes);
 
 // connect to mongo db
 const url = "mongodb+srv://admin:Hf0FcbKMB7MU96Cx@cluster0.osaykd4.mongodb.net/?retryWrites=true&w=majority"
