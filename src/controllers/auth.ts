@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getErrorMessage } from '../utils/errors.util';
-import * as admin from '../models/admin.model';
+import * as admin from '../../models/admin.model';
 
 export const login = async (req: Request, res: Response) => {
     try {
