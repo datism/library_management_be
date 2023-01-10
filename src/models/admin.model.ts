@@ -1,8 +1,8 @@
-import mongoose, {DocumentDefinition, Model, model} from 'mongoose';
+import mongoose, {DocumentDefinition, model} from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 
-interface IAdmin extends mongoose.Document {
+interface IAdmin {
     name: string;
     password: string;
 }
@@ -33,11 +33,11 @@ export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
     const isMatch = bcrypt.compareSync(admin.password, foundAdmin.password);
 
     if (isMatch) {
-        const token = jwt.sign({ _id: foundAdmin._id.toString(), name: foundAdmin.name }, process.env.SECRET_KEY as string, {
+        const token = jwt.sign({ name: foundAdmin.name }, process.env.SECRET_KEY as string, {
            expiresIn: '2 days',
         });
 
-        return { admin: { _id: foundAdmin._id, name: foundAdmin.name }, token: token};
+        return { admin: { name: foundAdmin.name }, token: token};
     }
     else {
         throw new Error('Password is not correct');

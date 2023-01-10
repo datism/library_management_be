@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import {CustomError, isCustomError} from "./src/error";
-import authRouter from "./src/routes/auth";
+import {routes} from "./src/routes";
 
 
 dotenv.config();
@@ -15,13 +15,14 @@ const port = 8000;
 app.use(bodyParser.json())
 
 // routes
-app.use('/auth', authRouter);
+app.use('/', routes);
 // TODO: Implement '/me' endpoint later
 // app.use('/me', );
 // app.use('/books', bookRouter)
 // app.use('/readers', readerRouter)
 // app.use('/borrows', borrowRouter)
 
+// error handler
 app.use((err: CustomError | Error, req: Request, res: Response) => {
     if (isCustomError(err)) {
         console.debug(err);
