@@ -20,11 +20,11 @@ AdminSchema.pre('validate', async function (next) {
     next();
 })
 
-export const AdminModel = model<IAdmin>('Admin', AdminSchema)
+export const Admin = model<IAdmin>('Admin', AdminSchema)
 
 const saltRounds = 8
 export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
-    const foundAdmin = await AdminModel.findOne({name: admin.name})
+    const foundAdmin = await Admin.findOne({name: admin.name})
 
     if (!foundAdmin) {
         throw new Error('Name of admin is not correct');
@@ -33,11 +33,11 @@ export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
     const isMatch = bcrypt.compareSync(admin.password, foundAdmin.password);
 
     if (isMatch) {
-        const token = jwt.sign({ name: foundAdmin.name }, process.env.SECRET_KEY as string, {
+        const token = jwt.sign({ _id: foundAdmin._id,  name: foundAdmin.name }, process.env.SECRET_KEY as string, {
            expiresIn: '2 days',
         });
 
-        return { admin: { name: foundAdmin.name }, token: token};
+        return { admin: { _id: foundAdmin._id, name: foundAdmin.name }, token: token};
     }
     else {
         throw new Error('Password is not correct');
@@ -45,7 +45,7 @@ export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
 }
 
 export async function createAdmin(admin: DocumentDefinition<IAdmin>): Promise<void> {
-    const newAdmin = new AdminModel({
+    const newAdmin = new Admin({
         ...admin
     });
 
