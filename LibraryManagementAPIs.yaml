@@ -69,48 +69,6 @@ paths:
         '405':
           description: Invalid input
 
-  /books/filter:
-    get:
-      tags:
-        - book
-      summary: Get book by tags
-      operationId: getBookByTags
-      parameters:
-        - name: catagory
-          in: query
-          schema:
-            type: string
-            enum:
-              - Essays
-              - Case Studies
-              - Syllabus
-              - Thesis
-        - name: subject
-          in: query
-          schema:
-            type: string
-            enum:
-              - Art
-              - Language
-              - Literature
-              - Gymnastics
-              - Physics
-              - Chemistry
-              - Biology
-              - Math
-              - History
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Book'
-        '400':
-          description: Invalid tags value
-
   /books/{bookId}:
     get:
       tags:
@@ -198,12 +156,17 @@ paths:
         '400':
           description: Invalid book value
 
-  /borrow:
+  /borrows:
     get:
       tags:
         - borrow
       summary: Get all borrow request
       operationId: getBorrowRequest
+      parameters:
+        - in: query
+          name: readerId
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful operation
@@ -321,7 +284,7 @@ paths:
           description: Invalid input
 
   /admin/login:
-    get:
+    post:
       tags:
         - admin
       summary: Logs user into the system
@@ -362,17 +325,6 @@ paths:
         '400':
           description: Invalid username/password supplied
 
-  /admin/logout:
-    post:
-      tags:
-        - admin
-      summary: log out admin
-      description: ''
-      operationId: loginUser
-      responses:
-        '200':
-          description: successful operation
-
   /admin/signup:
     post:
       tags:
@@ -406,7 +358,7 @@ components:
       properties:
         _id:
           type: string
-        dayAdded:
+        created:
           type: string
           format: date
         coverType:
@@ -421,6 +373,7 @@ components:
             - available
             - pending
             - borrowed
+            - lost
         detail:
           $ref: '#/components/schemas/BookDetail'
 
@@ -429,11 +382,9 @@ components:
       properties:
         _id:
           type: string
-        title:
+        name:
           type: string
-        coverId:
-          type: string
-        overview:
+        description:
           type: string
         category:
           type: string
@@ -442,7 +393,7 @@ components:
             - Case Studies
             - Syllabus
             - Thesis
-        subject:
+        type:
           type: string
           enum:
             - Art
@@ -458,26 +409,27 @@ components:
           type: string
         publisher:
           type: string
-        publishingDate:
+        publishedDate:
           type: string
           format: date
-        ISBN:
-          type: string
 
     Borrow:
       type: object
       properties:
         _id:
           type: string
-        borrower:
+        reader:
           $ref: '#/components/schemas/Reader'
         book:
           $ref: '#/components/schemas/Book'
-        at:
+        created:
           type: string
           format: date
-        isReturned:
-          type: boolean
+        status:
+          type: string
+          enum:
+            - inProgress
+            - returned
 
     Reader:
       type: object
@@ -493,7 +445,7 @@ components:
         email:
           type: string
 
-    Admin:
+    User:
       type: object
       properties:
         _id:
@@ -502,6 +454,10 @@ components:
           type: string
         password:
           type: string
+        role:
+          type: string
+          enum:
+            - admin
 
     ApiResponse:
       type: object
