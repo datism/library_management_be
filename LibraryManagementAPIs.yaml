@@ -11,11 +11,11 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /books:
+  /copies:
     get:
       tags:
-        - book
-      summary: Get all book
+        - BookCopy
+      summary: Get all copies
       operationId: getBook
       responses:
         '200':
@@ -25,40 +25,26 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Book'
+                  $ref: '#/components/schemas/Copy'
 
     post:
       tags:
-        - book
-      summary: Add a new book to the library
-      description: Add a new book to the library
-      operationId: addBook
+        - BookCopy
+      summary: Add a new copy to the library
+      description: Add a new copy to the library
+      operationId: addCopy
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
-                coverType:
-                  type: string
-                  enum:
-                    - paperback
-                    - case wrap
-                    - paperback
                 status:
                   type: string
                   enum:
                     - available
-                    - pending
-                    - borrowed
                 detail:
-                  $ref: '#/components/schemas/BookDetail'
-                coverImage:
-                  type: string
-                  format: base64
-            encoding: # The same level as schema
-              coverImage: # Property name (see above)
-                contentType: image/png, image/jpeg
+                  $ref: '#/components/schemas/Copy'
       responses:
         '200':
           description: Successful operation
@@ -69,17 +55,17 @@ paths:
         '405':
           description: Invalid input
 
-  /books/{bookId}:
+  /copies/{copyId}:
     get:
       tags:
-        - book
-      summary: Find book by ID
+        - BookCopy
+      summary: Find copy by ID
       description: Returns a single book
-      operationId: getBookById
+      operationId: getCopyById
       parameters:
-        - name: bookId
+        - name: copyId
           in: path
-          description: ID of book to return
+          description: ID of copy to return
           required: true
           schema:
             type: string
@@ -89,16 +75,44 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'
-        '400':
-          description: Invalid ID supplied
+                $ref: '#/components/schemas/Copy'
         '404':
           description: Book not found
     put:
       tags:
-        - book
-      summary: Update an existing book
-      operationId: updateBookById
+        - BookCopy
+      summary: Update copy status
+      operationId: updateCopyById
+      parameters:
+        - name: copyId
+          in: path
+          description: ID of copy to return
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - losted
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Copy'
+                
+  /books/{bookId}:
+    get:
+      tags:
+        - Book
+      summary: Get book by ID
       parameters:
         - name: bookId
           in: path
@@ -106,20 +120,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                allof:
-                  $ref: '#/components/schemas/Book'
-                coverImage:
-                  type: string
-                  format: base64
-            encoding:
-              coverImage:
-                contentType: image/png, image/jpeg
       responses:
         '200':
           description: Successful operation
@@ -127,46 +127,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Book not found
-        '405':
-          description: Validation exception
-    delete:
+      
+    
+    post:
       tags:
-        - book
-      summary: Deletes a book
-      description: delete a book
-      operationId: deleteBook
-      parameters:
-        - name: api_key
-          in: header
-          description: ''
-          required: false
-          schema:
-            type: string
-        - name: bookId
-          in: path
-          description: book id to delete
-          required: true
-          schema:
-            type: string
+        - Book
+      requestBody:
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
       responses:
-        '400':
-          description: Invalid book value
-
-  /borrows:
-    get:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Book'
+    put:
       tags:
-        - borrow
-      summary: Get all borrow request
-      operationId: getBorrowRequest
-      parameters:
-        - in: query
-          name: readerId
-          schema:
-            type: integer
+        - Book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
       responses:
         '200':
           description: Successful operation
@@ -175,6 +160,58 @@ paths:
               schema:
                 type: array
                 items:
+                  $ref: '#/components/schemas/Book'
+                  
+  /borrows:
+    get:
+      tags:
+        - borrow
+      summary: Get an reader's borrow requests
+      operationId: getBorrowRequestByBorrowerId
+      parameters:
+        - name: subscriberId
+          in: query
+          description: 'The name that needs to be fetched.'
+          required: false
+          schema:
+            type: string
+        - name: bookId
+          in: query
+          description: 'The book that needs to be fetched.'
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: 'The status that needs to be fetched.'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Borrow'
+
+  /borrows/{borrowId}:
+    get:
+      tags:
+        - borrow
+      summary: Get borrow by id
+      operationId: getBorrowRequest
+      parameters:
+        - in: query
+          name: borrowId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
                   $ref: '#/components/schemas/Borrow'
     post:
       tags:
@@ -223,19 +260,19 @@ paths:
         '405':
           description: Validation exception
 
-  /borrow/{readerId}:
+
+  /subscribers:
     get:
       tags:
-        - borrow
-      summary: Get an reader's borrow requests
-      operationId: getBorrowRequestByBorrowerId
+        - Subscriber
+      summary: Get all subscribers
+      operationId: getSubscribers
       parameters:
-        - name: readerId
-          in: path
-          description: 'The name that needs to be fetched.'
-          required: true
+        - name: name
+          in: query
           schema:
             type: string
+            
       responses:
         '200':
           description: Successful operation
@@ -244,34 +281,18 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Borrow'
-
-  /reader:
-    get:
-      tags:
-        - reader
-      summary: Get all reader
-      operationId: getReader
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reader'
+                  $ref: '#/components/schemas/Subscriber'
 
     post:
       tags:
-        - reader
-      summary: Creat a new reader
-      operationId: addReader
+        - Subscriber
+      summary: Creat a new subscriber
+      operationId: addSubscriber
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Reader'
+              $ref: '#/components/schemas/Subscriber'
         required: true
       responses:
         '200':
@@ -279,14 +300,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Reader'
+                $ref: '#/components/schemas/Subscriber'
         '405':
           description: Invalid input
 
-  /admin/login:
+  /auth/login:
     post:
       tags:
-        - admin
+        - auth
       summary: Logs user into the system
       description: ''
       operationId: loginUser
@@ -325,10 +346,10 @@ paths:
         '400':
           description: Invalid username/password supplied
 
-  /admin/signup:
+  /auth/signup:
     post:
       tags:
-        - admin
+        - auth
       summary: register
       description: ''
       operationId: signupUser
@@ -353,7 +374,7 @@ paths:
 
 components:
   schemas:
-    Book:
+    Copy:
       type: object
       properties:
         _id:
@@ -361,12 +382,6 @@ components:
         created:
           type: string
           format: date
-        coverType:
-          type: string
-          enum:
-            - paperback
-            - case wrap
-            - paperback
         status:
           type: string
           enum:
@@ -374,10 +389,10 @@ components:
             - pending
             - borrowed
             - lost
-        detail:
-          $ref: '#/components/schemas/BookDetail'
+        book:
+          $ref: '#/components/schemas/Book'
 
-    BookDetail:
+    Book:
       type: object
       properties:
         _id:
@@ -418,9 +433,9 @@ components:
       properties:
         _id:
           type: string
-        reader:
-          $ref: '#/components/schemas/Reader'
-        book:
+        subcriberId:
+          $ref: '#/components/schemas/Subscriber'
+        bookId:
           $ref: '#/components/schemas/Book'
         created:
           type: string
@@ -430,19 +445,18 @@ components:
           enum:
             - inProgress
             - returned
+            - losted
 
-    Reader:
+    Subscriber:
       type: object
       properties:
         _id:
           type: string
         name:
           type: string
-        studentId:
-          type: string
-        school:
-          type: string
         email:
+          type: string
+        phone:
           type: string
 
     User:
