@@ -8,7 +8,7 @@ info:
     email: trinhdat260901@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
   /copies:
@@ -107,6 +107,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Copy'
+
+  /books:
+    post:
+      tags:
+        - Book
+      summary: Add a new book to the library
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/BookInfo'
+                - type: object
+                  properties:
+                    cover:
+                      type: string
+                      format: binary
+            encoding:
+              cover:
+                contentType: image/png, image/jpeg
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
                 
   /books/{bookId}:
     get:
@@ -127,23 +155,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-      
-    
-    post:
-      tags:
-        - Book
-      requestBody:
-        content:
-          application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Book'
+
     put:
       tags:
         - Book
@@ -393,47 +405,25 @@ components:
           $ref: '#/components/schemas/Book'
 
     Book:
-      type: object
-      properties:
-        _id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        category:
-          type: string
-          enum:
-            - Essays
-            - Case Studies
-            - Syllabus
-            - Thesis
-        type:
-          type: string
-          enum:
-            - Art
-            - Language
-            - Literature
-            - Gymnastics
-            - Physics
-            - Chemistry
-            - Biology
-            - Math
-            - History
-        author:
-          type: string
-        publisher:
-          type: string
-        publishedDate:
-          type: string
-          format: date
+      allOf:
+        - $ref: "#/components/schemas/BookInfo"
+        - type: object
+          properties:
+            cover:
+              type: object
+              properties:
+                data:
+                  type: string
+                contentType:
+                  type: string
+
 
     Borrow:
       type: object
       properties:
         _id:
           type: string
-        subcriberId:
+        subscriberId:
           $ref: '#/components/schemas/Subscriber'
         bookId:
           $ref: '#/components/schemas/Book'
@@ -483,3 +473,39 @@ components:
           type: string
         message:
           type: string
+
+    BookInfo:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum:
+            - Essays
+            - Case Studies
+            - Syllabus
+            - Thesis
+        type:
+          type: string
+          enum:
+            - Art
+            - Language
+            - Literature
+            - Gymnastics
+            - Physics
+            - Chemistry
+            - Biology
+            - Math
+            - History
+        author:
+          type: string
+        publisher:
+          type: string
+        publishedDate:
+          type: string
+          format: date
