@@ -1,10 +1,10 @@
-import * as admin from '../models/admin';
+import * as User from '../models/user';
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest} from "../error";
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await admin.findByCredentials(req.body);
+        const user = await User.findByCredentials(req.body);
         res.status(200).send(user);
     }
     catch (error) {
@@ -18,11 +18,12 @@ export const logout = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await admin.createAdmin(req.body);
+        await User.createUser(req.body);
 
         res.status(200).send('Inserted successfully');
     }
     catch (error) {
+        console.log(error)
         return next(new BadRequest({message:'Invalid credentials'}));
     }
 }
