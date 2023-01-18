@@ -134,7 +134,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-
+    get:
+      tags:
+        - Book
+      summary: Get all books
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            multipart/form-data:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BookInfo'
+                  - type: object
+                    properties:
+                      cover:
+                        type: string
+                        format: binary
+              encoding:
+                cover:
+                  contentType: image/png, image/jpeg
                 
   /books/{bookId}:
     get:
@@ -173,6 +192,17 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
+    
+    delete:
+      tags:
+        - Book
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
                   
   /borrows:
     get:
@@ -206,25 +236,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Borrow'
-
-  /borrows/{borrowId}:
-    get:
-      tags:
-        - borrow
-      summary: Get borrow by id
-      operationId: getBorrowRequest
-      parameters:
-        - in: query
-          name: borrowId
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Borrow'
+                  
     post:
       tags:
         - borrow
@@ -248,6 +260,25 @@ paths:
                 $ref: '#/components/schemas/Borrow'
         '405':
           description: Invalid input
+
+  /borrows/{borrowId}:
+    get:
+      tags:
+        - borrow
+      summary: Get borrow by id
+      operationId: getBorrowRequest
+      parameters:
+        - in: query
+          name: borrowId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Borrow'
     put:
       tags:
         - borrow
@@ -409,7 +440,7 @@ components:
         - $ref: "#/components/schemas/BookInfo"
         - type: object
           properties:
-            cover:
+            image:
               type: object
               properties:
                 data:
