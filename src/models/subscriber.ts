@@ -1,0 +1,15 @@
+import mongoose, {model} from "mongoose";
+
+interface ISubscriber {
+    name: string;
+    email: string;
+    phone: string
+}
+
+const SubscriberSchema: mongoose.Schema<ISubscriber> = new mongoose.Schema({
+    name: { type: String, required: true},
+    email: {type: String, required:true, unique: true},
+    phone: {type: String, unique: true}
+});
+
+export const Subscriber = model<ISubscriber>('Subscriber', SubscriberSchema)
