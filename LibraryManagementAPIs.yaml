@@ -217,9 +217,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: bookId
+        - name: copyId
           in: query
-          description: 'The book that needs to be fetched.'
+          description: 'The copy that needs to be fetched.'
           schema:
             type: string
         - name: status
@@ -247,7 +247,7 @@ paths:
           in: query
           schema:
             type: string
-        - name: bookId
+        - name: copyId
           in: query
           schema:
             type: string
@@ -454,11 +454,14 @@ components:
       properties:
         _id:
           type: string
-        subscriberId:
+        subscriber:
           $ref: '#/components/schemas/Subscriber'
-        bookId:
-          $ref: '#/components/schemas/Book'
-        created:
+        copy:
+          $ref: '#/components/schemas/Copy'
+        startDate:
+          type: string
+          format: date
+        endDate:
           type: string
           format: date
         status:
@@ -466,7 +469,8 @@ components:
           enum:
             - inProgress
             - returned
-            - losted
+            - lost
+            - overdue
 
     Subscriber:
       type: object
