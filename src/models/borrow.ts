@@ -1,6 +1,6 @@
 import mongoose, {model, Schema, Types} from "mongoose";
 import {Subscriber} from "./subscriber";
-import {Book} from "./book";
+import {Copy} from "./copy";
 
 interface IBorrow {
     reader: Types.ObjectId,
@@ -18,7 +18,7 @@ const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
     book: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: Book
+        ref: Copy
     },
     at: {
         type: Date,

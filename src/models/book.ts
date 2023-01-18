@@ -1,34 +1,37 @@
-import mongoose, {model, Schema, Types} from "mongoose";
-import {BookDetail} from "./bookdetail";
+import mongoose, {model} from "mongoose";
 
 interface IBook {
-    coverType: string,
-    status: string,
-    dayAdded: Date,
-    detail: Types.ObjectId
+    title: string,
+    description: string,
+    category: string,
+    type: string,
+    author: string,
+    publisher: string,
+    publishingDate: Date,
+    image: {
+        data: Buffer,
+        contentType: string,
+    }
 }
 
 const BookSchema: mongoose.Schema<IBook> = new mongoose.Schema({
-    coverType: {
+    title: { type: String, required: true},
+    description:  String,
+    category: {
         type: String,
         required: true,
-        enum: ['paperback', 'case wrap', 'paperback']
+        enum: ['Essays', 'Case Studies', 'Syllabus', 'Thesis']
     },
-    status: {
+    type: {
         type: String,
         required: true,
-        enum: ['available', 'pending', 'borrowed']
+        enum: ['Art', 'Language', 'Literature', 'Gymnastics', 'Physics', 'Chemistry', 'Biology', 'Math', 'History']
     },
-    dayAdded: {
-        type: Date,
-        required: true,
-        default: Date.now
-
-    },
-    detail: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: BookDetail
+    publisher: String,
+    publishingDate: Date,
+    image: {
+        data: Buffer,
+        contentType: String,
     }
 });
 
