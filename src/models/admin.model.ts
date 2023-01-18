@@ -1,11 +1,13 @@
-import mongoose, {DocumentDefinition, model} from 'mongoose';
+import mongoose, {DocumentDefinition, Model, model} from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 
-interface IAdmin {
+interface IAdmin extends mongoose.Document {
     name: string;
     password: string;
 }
+
+const saltRounds = 8
 
 const AdminSchema: mongoose.Schema<IAdmin> = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
@@ -20,24 +22,23 @@ AdminSchema.pre('validate', async function (next) {
     next();
 })
 
-export const Admin = model<IAdmin>('Admin', AdminSchema)
+export const AdminModel = model<IAdmin>('Admin', AdminSchema)
 
-const saltRounds = 8
 export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
-    const foundAdmin = await Admin.findOne({name: admin.name})
+    const user = await AdminModel.findOne({name: admin.name})
 
-    if (!foundAdmin) {
+    if (!user) {
         throw new Error('Name of admin is not correct');
     }
 
-    const isMatch = bcrypt.compareSync(admin.password, foundAdmin.password);
+    const isMatch = bcrypt.compareSync(admin.password, user.password);
 
     if (isMatch) {
-        const token = jwt.sign({ _id: foundAdmin._id,  name: foundAdmin.name }, process.env.SECRET_KEY as string, {
-            expiresIn: '2 days',
+        const token = jwt.sign({ _id: user._id.toString(), name: user.name }, process.env.SECRET_KEY as string, {
+           expiresIn: '2 days',
         });
 
-        return { admin: { _id: foundAdmin._id, name: foundAdmin.name }, token: token};
+        return { admin: { _id: user._id, name: user.name }, token: token};
     }
     else {
         throw new Error('Password is not correct');
@@ -45,9 +46,10 @@ export async function findByCredentials(admin: DocumentDefinition<IAdmin>) {
 }
 
 export async function createAdmin(admin: DocumentDefinition<IAdmin>): Promise<void> {
-    const newAdmin = new Admin({
+    const newAdmin = new AdminModel({
         ...admin
     });
 
     await newAdmin.save()
 }
+

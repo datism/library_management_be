@@ -1,9 +1,9 @@
-import * as adminController from '../controllers/auth';
+import * as authController from '../controllers/auth';
 import {Router} from "express";
 
-export const authRoute = Router();
+export const router = Router();
 
-authRoute.get('/login', adminController.login);
-authRoute.post('/signup', adminController.signup);
+router.get('/login', authController.login);
+router.post('/signup', authController.signup);
 
-export default authRoute;
+export default router;

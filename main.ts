@@ -1,9 +1,13 @@
-import express, { Express, Request, Response } from 'express';
+import express, {Express, NextFunction, Request, Response} from 'express';
 import * as mongoose from "mongoose";
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import {CustomError, isCustomError} from "./src/error";
-import {routes} from "./src/routes";
+import authRouter from './src/routes/auth'
+import bookRouter from './src/routes/book'
+import copyRouter from './src/routes/copy'
+import subscriberRouter from './src/routes/subscriber'
+import borrowRouter from './src/routes/borrow'
 
 
 dotenv.config();
@@ -15,15 +19,14 @@ const port = 8000;
 app.use(bodyParser.json())
 
 // routes
-app.use('/', routes);
-// TODO: Implement '/me' endpoint later
-// app.use('/me', );
-// app.use('/books', bookRouter)
-// app.use('/readers', readerRouter)
-// app.use('/borrows', borrowRouter)
+app.use('/auth', authRouter);
+app.use('/books', bookRouter)
+app.use('/subscribers', subscriberRouter)
+app.use('/borrows', borrowRouter)
+app.use('/copies', copyRouter)
 
-// error handler
-app.use((err: CustomError | Error, req: Request, res: Response) => {
+
+app.use((err: CustomError | Error, req: Request, res: Response, next: NextFunction) => {
     if (isCustomError(err)) {
         console.debug(err);
 
