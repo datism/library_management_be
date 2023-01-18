@@ -1,35 +1,29 @@
 import mongoose, {model, Schema, Types} from "mongoose";
 import {Book} from "./book";
 
-interface IBook {
-    coverType: string,
+interface ICopy {
     status: string,
-    dayAdded: Date,
-    detail: Types.ObjectId
+    created: Date,
+    book: Types.ObjectId
 }
 
-const BookSchema: mongoose.Schema<IBook> = new mongoose.Schema({
-    coverType: {
-        type: String,
-        required: true,
-        enum: ['paperback', 'case wrap', 'paperback']
-    },
+const CopySchema: mongoose.Schema<ICopy> = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['available', 'pending', 'borrowed']
+        enum: ['available', 'pending', 'borrowed', 'lost']
     },
-    dayAdded: {
+    created: {
         type: Date,
         required: true,
         default: Date.now
 
     },
-    detail: {
+    book: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: Book
     }
 });
 
-export const Copy = model<IBook>('Copy', BookSchema)
+export const Copy = model<ICopy>('Copy', CopySchema)
