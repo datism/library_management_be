@@ -1,15 +1,24 @@
-import * as User from '../models/user';
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest} from "../error";
+import {User} from "../models/user";
+import jwt from "jsonwebtoken";
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const user = await User.findByCredentials(req.body);
-        res.status(200).send(user);
+    const foundUser = await User.findOne({name: req.body.name})
+
+    if (foundUser) {
+        const isMatch = await foundUser.comparePassword(req.body.password);
+        if (isMatch) {
+            const token = jwt.sign({ _id: foundUser._id,  name: foundUser.name }, process.env.SECRET_KEY as string, {
+                expiresIn: '2 days',
+            });
+
+            res.status(200).send({user: { _id: foundUser._id, name: foundUser.name }, token: token});
+            return next()
+        }
     }
-    catch (error) {
-        return next(new BadRequest({message:'Invalid credentials'}));
-    }
+
+    next(new BadRequest({message:'Invalid credentials'}));
 }
 
 export const logout = async (req: Request, res: Response) => {
@@ -18,7 +27,10 @@ export const logout = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await User.createUser(req.body);
+        await User.create({
+            ...req.body,
+            role: "Admin"
+        });
 
         res.status(200).send('Inserted successfully');
     }
