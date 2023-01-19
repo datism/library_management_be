@@ -1,4 +1,4 @@
-import mongoose, {model} from "mongoose";
+import {Document, model, Schema} from "mongoose";
 
 interface ISubscriber {
     name: string;
@@ -6,7 +6,7 @@ interface ISubscriber {
     phone: string
 }
 
-const SubscriberSchema: mongoose.Schema<ISubscriber> = new mongoose.Schema({
+const SubscriberSchema = new Schema<ISubscriber> ({
     name: { type: String, required: true},
     email: {type: String, required:true, unique: true},
     phone: {type: String, unique: true}

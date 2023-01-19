@@ -35,7 +35,6 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         res.status(200).send('Inserted successfully');
     }
     catch (error) {
-        console.log(error)
         return next(new BadRequest({message:'Invalid credentials'}));
     }
 }

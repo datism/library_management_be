@@ -1,6 +1,6 @@
-import mongoose, {model} from "mongoose";
+import {Schema, model} from "mongoose";
 
-interface IBook {
+export interface IBook {
     title: string,
     description: string,
     category: string,
@@ -8,13 +8,13 @@ interface IBook {
     author: string,
     publisher: string,
     publishingDate: Date,
-    image: {
+    cover: {
         data: Buffer,
         contentType: string,
     }
 }
 
-const BookSchema: mongoose.Schema<IBook> = new mongoose.Schema({
+const BookSchema = new Schema<IBook> ({
     title: { type: String, required: true},
     description:  String,
     category: {
@@ -29,7 +29,7 @@ const BookSchema: mongoose.Schema<IBook> = new mongoose.Schema({
     },
     publisher: String,
     publishingDate: Date,
-    image: {
+    cover: {
         data: Buffer,
         contentType: String,
     }
