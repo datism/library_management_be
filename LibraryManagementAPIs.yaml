@@ -180,9 +180,18 @@ paths:
         - Book
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Book'
+              allOf:
+                - $ref: '#/components/schemas/BookInfo'
+                - type: object
+                  properties:
+                    cover:
+                      type: string
+                      format: binary
+            encoding:
+              cover:
+                contentType: image/png, image/jpeg
       responses:
         '200':
           description: Successful operation

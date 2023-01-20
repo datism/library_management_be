@@ -9,7 +9,7 @@ export interface IBook {
     publisher: string,
     publishingDate: Date,
     cover: {
-        data: Buffer,
+        image: BinaryData,
         contentType: string,
     }
 }
@@ -30,7 +30,7 @@ const BookSchema = new Schema<IBook> ({
     publisher: String,
     publishingDate: Date,
     cover: {
-        data: Buffer,
+        image: Buffer,
         contentType: String,
     }
 });
