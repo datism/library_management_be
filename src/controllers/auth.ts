@@ -32,6 +32,16 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
+    const name = req.body.name
+    const user = await User.findOne({name: name})
+
+    if (user) {
+        return next(new BadRequest({
+            message:`Another account with name ${name} has already existed.`,
+            customCode: 400001
+        }));
+    }
+
     try {
         await User.create({
             ...req.body,
@@ -41,6 +51,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         res.status(200).send('Inserted successfully');
     }
     catch (error) {
+        // TODO: return Internal Server Here?
         return next(new BadRequest({message:'Invalid credentials'}));
     }
 }
