@@ -12,9 +12,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
-export const logout = async (req: Request, res: Response) => {
-    res.status(200).send("log out successfully")
-}
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
