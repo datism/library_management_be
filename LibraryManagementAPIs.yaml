@@ -27,53 +27,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/Copy'
 
-  /copies/{bookId}:
-    get:
-      tags:
-        - BookCopy
-      summary: Get copies of a book
-      parameters:
-        - name: bookIdId
-          in: path
-          description: ID of book
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Copy'
-        '404':
-          description: copies not found
-
-    post:
-      tags:
-        - BookCopy
-      summary: Add a new copy to the library
-      description: Add a new copy to the library
-      operationId: addCopy
-      parameters:
-        - name: bookIdId
-          in: path
-          description: ID of book
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Copy'
-        '405':
-          description: Invalid input
-
   /copies/{copyId}:
     get:
       tags:
@@ -220,7 +173,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
-    
+
     delete:
       tags:
         - Book
@@ -231,6 +184,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
+
+  /books/{bookId}/copies:
+    get:
+      tags:
+        - Book
+      summary: Get copies of a book
+      parameters:
+        - name: bookIdId
+          in: path
+          description: ID of book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Copy'
+        '404':
+          description: copies not found
+
+    post:
+      tags:
+        - Book
+      summary: Add a new copy to the library
+      description: Add a new copy to the library
+      operationId: addCopy
+      parameters:
+        - name: bookIdId
+          in: path
+          description: ID of book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Copy'
+        '405':
+          description: Invalid input
 
   /borrows:
     get:
