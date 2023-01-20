@@ -310,12 +310,6 @@ paths:
         - Subscriber
       summary: Get all subscribers
       operationId: getSubscribers
-      parameters:
-        - name: name
-          in: query
-          schema:
-            type: string
-            
       responses:
         '200':
           description: Successful operation
