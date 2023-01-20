@@ -27,31 +27,50 @@ paths:
                 items:
                   $ref: '#/components/schemas/Copy'
 
-    post:
+  /copies/{bookId}:
+    get:
       tags:
         - BookCopy
-      summary: Add a new copy to the library
-      description: Add a new copy to the library
-      operationId: addCopy
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  enum:
-                    - available
-                detail:
-                  $ref: '#/components/schemas/Copy'
+      summary: Get copies of a book
+      parameters:
+        - name: bookIdId
+          in: path
+          description: ID of book
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Copy'
+        '404':
+          description: copies not found
+
+    post:
+      tags:
+        - BookCopy
+      summary: Add a new copy to the library
+      description: Add a new copy to the library
+      operationId: addCopy
+      parameters:
+        - name: bookIdId
+          in: path
+          description: ID of book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Copy'
         '405':
           description: Invalid input
 
@@ -212,7 +231,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-                  
+
   /borrows:
     get:
       tags:
