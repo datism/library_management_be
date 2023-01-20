@@ -21,9 +21,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     next(new BadRequest({message:'Invalid credentials'}));
 }
 
-export const logout = async (req: Request, res: Response) => {
-    res.status(200).send("log out successfully")
-}
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {

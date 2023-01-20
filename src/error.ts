@@ -27,15 +27,17 @@ export class BadRequest extends CustomError {
     constructor({
         data,
         message = 'Bad request',
+        customCode = 40000,
     } : {
         data?: any,
         message?: string,
+        customCode?: number
     } = {}) {
         super({
             data,
             message,
             code: 400,
-            customCode: 40000
+            customCode,
         })
     }
 }
@@ -104,6 +106,22 @@ export class InternalServerError extends CustomError {
             message: message || 'Internal Server Error',
             code: 500,
             customCode: 50000
+        });
+    }
+}
+
+export class ValidationError extends BadRequest {
+    constructor({
+        data,
+        message
+    } : {
+        data?: any,
+        message?: string
+    } = {}) {
+        super({
+            data,
+            message: message || 'Validation Error',
+            customCode: 40000,
         });
     }
 }
