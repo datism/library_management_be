@@ -9,14 +9,37 @@ export const getSubscribers = async (req: Request, res: Response, next: NextFunc
 }
 
 export const createSubscriber = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        await Subscriber.create({
-            ...req.body,
-        });
+    // Check duplication for name, email and phone (if any)
+    let subscriber = await Subscriber.findOne({name: req.body.name})
 
-        res.status(200).send('Inserted successfully');
+    if (subscriber) {
+        return next(new BadRequest({
+            message:`Another subscriber with name ${req.body.name} has already existed.`,
+            customCode: 400002
+        }));
     }
-    catch (error) {
-        return next(new BadRequest({message:'Invalid credentials'}));
+
+    subscriber = await Subscriber.findOne({email: req.body.email})
+    if (subscriber) {
+        return next(new BadRequest({
+            message: `Another subscriber with email ${req.body.email} has already existed.`,
+            customCode: 400002
+        }));
     }
+
+    if (req.body.phone) {
+        subscriber = await Subscriber.findOne({phone: req.body.phone})
+        if (subscriber) {
+            return next(new BadRequest({
+                message: `Another subscriber with phone ${req.body.phone} has already existed.`,
+                customCode: 400002
+            }));
+        }
+    }
+
+    await Subscriber.create({
+        ...req.body,
+    });
+
+    res.status(200).send('Subscriber created successfully');
 }
