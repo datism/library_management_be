@@ -15,6 +15,19 @@ export const getCopyById = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+export const createCopy = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        await Copy.create({
+            status: 'available',
+            book: req.body.bookId
+        })
+
+        res.status(200).send('Inserted successfully');
+    } catch (e) {
+        return next(new BadRequest({message:'book doesnt exist'}));
+    }
+}
+
 export const getCopies = async (req: Request, res: Response, next: NextFunction) => {
 }
 

@@ -2,7 +2,6 @@ import { NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
-import {Copy} from "../models/copy";
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -32,8 +31,11 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
             }
         })
 
+        
+
         res.status(200).send('Inserted successfully');
     } catch (e) {
+        console.log(e)
         return next(new BadRequest({}));
     }
 }
@@ -74,22 +76,6 @@ export const deleteBook = async (req: Request, res: Response, next: NextFunction
     } catch (e) {
         return next(new NotFound({message: 'book not found'}))
     }
-}
-
-export const createCopy = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        await Copy.create({
-            status: 'available',
-            book: req.params.id
-        })
-
-        res.status(200).send('Inserted successfully');
-    } catch (e) {
-        return next(new BadRequest({message:'book doesnt exist'}));
-    }
-}
-
-export const getCopiesFromBook = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 

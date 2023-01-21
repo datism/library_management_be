@@ -13,7 +13,4 @@ router.get('/:id', bookController.getBookById);
 router.put('/:id', upload.single('cover'), bookController.updateBook);
 router.delete('/:id', bookController.deleteBook);
 
-router.get('/:id/copies', bookController.getCopiesFromBook);
-router.post('/:id/copies', bookController.createCopy);
-
 export default router;
