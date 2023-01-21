@@ -7,7 +7,7 @@ export interface IBook {
     type: string,
     author: string,
     publisher: string,
-    publishingDate: Date,
+    publishedDate: Date,
     cover: {
         image: BinaryData,
         contentType: string,
@@ -28,7 +28,7 @@ const BookSchema = new Schema<IBook> ({
         enum: ['Art', 'Language', 'Literature', 'Gymnastics', 'Physics', 'Chemistry', 'Biology', 'Math', 'History']
     },
     publisher: String,
-    publishingDate: Date,
+    publishedDate: Date,
     cover: {
         image: Buffer,
         contentType: String,
