@@ -1,13 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
-import {BadRequest, NotFound} from "../error";
+import {BadRequest} from "../error";
 import {Subscriber} from "../models/subscriber";
 
 export const getSubscribers = async (req: Request, res: Response, next: NextFunction) => {
     const subscribers = await Subscriber.find();
-
-    if (!subscribers || subscribers.length == 0) {
-        return next(new NotFound({message:'no subscriber'}))
-    }
 
     res.status(200).send(subscribers)
 }
