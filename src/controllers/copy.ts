@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
+import {Book} from "../models/book";
 
 export const getCopyById = async (req: Request, res: Response, next: NextFunction) => {
     const copy = await Copy.findById(req.params.id)
@@ -12,16 +13,20 @@ export const getCopyById = async (req: Request, res: Response, next: NextFunctio
 }
 
 export const createCopy = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        await Copy.create({
-            status: 'available',
-            book: req.body.bookId
-        })
+    const bookId = req.body.bodyId
+    const book = await Book.findById(bookId)
 
-        res.status(200).send('Inserted successfully');
-    } catch (e) {
-        return next(new BadRequest({message:'book doesnt exist'}));
-    }
+    if (!book)
+        return next(new BadRequest({message:'Book not existed'}));
+
+    // TODO: extract status to enums
+    await Copy.create({
+        status: 'available',
+        book: req.body.bookId
+    })
+
+    res.status(200).send('Copy created successfully');
+
 }
 
 export const getCopies = async (req: Request, res: Response, next: NextFunction) => {
