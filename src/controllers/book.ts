@@ -30,12 +30,15 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
         })
 
         res.status(200).send('Inserted successfully');
+
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const message = Object.values(error.errors).map(value => value.message).toString();
-            return next(new BadRequest({message: message}));
+            next(new BadRequest({message: message}));
         }
     }
+
+    fs.unlink(file.path, err => console.log(err));
 }
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
