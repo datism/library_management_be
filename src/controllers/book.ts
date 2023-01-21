@@ -4,18 +4,15 @@ import {Book} from "../models/book";
 import * as fs from "fs";
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const book = await Book.findById(req.params.id)
+    const book = await Book.findById(req.params.id)
 
-        if (!book)
-            return next(new NotFound({ message: "book not found"}));
+    if (!book)
+        return next(new NotFound());
 
-        res.status(200).send(book)
-    } catch (e) {
-        return next(new BadRequest({message: "wrong id format"}))
-    }
+    res.status(200).send(book)
 }
 
+// TODO: Review this method later. Currently let's investigate this approach further
 export const createBook = async(req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
 
@@ -41,15 +38,13 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
+    // TODO: get by query params
     const books = await Book.find();
-
-    if (!books || books.length == 0) {
-        return next(new NotFound({message:'no books'}))
-    }
 
     res.status(200).send(books)
 }
 
+// TODO: Review later
 export const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     const book = req.body;
     const file = req.file;
@@ -74,7 +69,7 @@ export const deleteBook = async (req: Request, res: Response, next: NextFunction
         await Book.findByIdAndDelete(req.params.id);
         res.status(200).send('Deleted successfully')
     } catch (e) {
-        return next(new NotFound({message: 'book not found'}))
+        return next(new NotFound({message: 'Book not found'}))
     }
 }
 

@@ -1,31 +1,47 @@
 import {NextFunction, Request, Response} from 'express';
-import {BadRequest} from "../error";
+import {BadRequest, Unauthorized} from "../error";
 import {User} from "../models/user";
 import jwt from "jsonwebtoken";
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-    const foundUser = await User.findOne({name: req.body.name})
+    const user = await User.findOne({name: req.body.name})
 
-    if (foundUser) {
-        const isMatch = await foundUser.comparePassword(req.body.password);
+    if (user) {
+        const isMatch = await user.comparePassword(req.body.password);
         if (isMatch) {
-            const token = jwt.sign({ _id: foundUser._id,  name: foundUser.name }, process.env.SECRET_KEY as string, {
+            const token = jwt.sign(
+                { _id: user._id,  name: user.name },
+                process.env.SECRET_KEY as string,
+                {
                 expiresIn: '2 days',
-            });
+                }
+            );
 
-            res.status(200).send({user: { _id: foundUser._id, name: foundUser.name }, token: token});
+            res.status(200).send({
+                user: { _id: user._id, name: user.name },
+                token: token,
+            });
             return next()
         }
+
+        next(new Unauthorized({message: 'Invalid password'}));
     }
 
-    next(new BadRequest({message:'Invalid credentials'}));
+    next(new Unauthorized({message:'Invalid credentials'}));
 }
 
-export const logout = async (req: Request, res: Response) => {
-    res.status(200).send("log out successfully")
-}
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
+    const name = req.body.name
+    const user = await User.findOne({name: name})
+
+    if (user) {
+        return next(new BadRequest({
+            message:`Another account with name ${name} has already existed.`,
+            customCode: 400001
+        }));
+    }
+
     try {
         await User.create({
             ...req.body,
@@ -35,6 +51,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         res.status(200).send('Inserted successfully');
     }
     catch (error) {
+        // TODO: return Internal Server Here?
         return next(new BadRequest({message:'Invalid credentials'}));
     }
 }
