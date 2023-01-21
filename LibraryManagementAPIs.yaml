@@ -39,19 +39,15 @@ paths:
             schema:
               type: object
               properties:
-                status:
+                bookId:
                   type: string
-                  enum:
-                    - available
-                detail:
-                  $ref: '#/components/schemas/Copy'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'
+                $ref: '#/components/schemas/Copy'
         '405':
           description: Invalid input
 
@@ -180,9 +176,18 @@ paths:
         - Book
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Book'
+              allOf:
+                - $ref: '#/components/schemas/BookInfo'
+                - type: object
+                  properties:
+                    cover:
+                      type: string
+                      format: binary
+            encoding:
+              cover:
+                contentType: image/png, image/jpeg
       responses:
         '200':
           description: Successful operation
@@ -192,7 +197,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
-    
+
     delete:
       tags:
         - Book
@@ -203,7 +208,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-                  
+
   /borrows:
     get:
       tags:
@@ -217,9 +222,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: bookId
+        - name: copyId
           in: query
-          description: 'The book that needs to be fetched.'
+          description: 'The copy that needs to be fetched.'
           schema:
             type: string
         - name: status
@@ -243,11 +248,11 @@ paths:
       summary: Create a new borrow request
       operationId: addBookRequest
       parameters:
-        - name: username
+        - name: subscriberId
           in: query
           schema:
             type: string
-        - name: bookId
+        - name: copyId
           in: query
           schema:
             type: string
@@ -310,12 +315,6 @@ paths:
         - Subscriber
       summary: Get all subscribers
       operationId: getSubscribers
-      parameters:
-        - name: name
-          in: query
-          schema:
-            type: string
-            
       responses:
         '200':
           description: Successful operation
@@ -454,11 +453,14 @@ components:
       properties:
         _id:
           type: string
-        subscriberId:
+        subscriber:
           $ref: '#/components/schemas/Subscriber'
-        bookId:
-          $ref: '#/components/schemas/Book'
-        created:
+        copy:
+          $ref: '#/components/schemas/Copy'
+        startDate:
+          type: string
+          format: date
+        endDate:
           type: string
           format: date
         status:
@@ -466,7 +468,8 @@ components:
           enum:
             - inProgress
             - returned
-            - losted
+            - lost
+            - overdue
 
     Subscriber:
       type: object
@@ -510,7 +513,7 @@ components:
       properties:
         _id:
           type: string
-        name:
+        title:
           type: string
         description:
           type: string

@@ -1,13 +1,9 @@
 import {Router} from "express";
-
-import * as copyController from '../controllers/copy';
+import * as subscriberController from '../controllers/subscriber'
 
 const router = Router();
 
-router.get('', copyController.getCopies);
-router.post('', copyController.createCopy);
-
-router.get('/:id', copyController.getCopyById);
-router.put('/:id', copyController.updateCopyStatus);
+router.get('', subscriberController.getSubscribers);
+router.post('', subscriberController.createSubscriber);
 
 export default router;

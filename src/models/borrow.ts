@@ -1,29 +1,40 @@
 import mongoose, {model, Schema, Types} from "mongoose";
-import {Reader} from "./reader";
-import {Book} from "./book";
+import {Subscriber} from "./subscriber";
+import {Copy} from "./copy";
 
 interface IBorrow {
-    reader: Types.ObjectId,
-    book: Types.ObjectId,
-    at: Date,
-    isReturned: boolean
+    subscriber: Types.ObjectId,
+    copy: Types.ObjectId,
+    startDate: Date,
+    endDate: Date,
+    status: string
 }
 
 const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
-    reader: {
+    subscriber: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: Reader
+        ref: Subscriber
     },
-    book: {
+    copy: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: Book
+        ref: Copy
     },
-    at: {
+    startDate: {
         type: Date,
         required: true,
         default: Date.now
+    },
+    endDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['inProgress', 'returned', 'lost', 'overdue']
     }
 });
 
