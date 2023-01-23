@@ -2,12 +2,13 @@ import { NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
+import mongoose from "mongoose";
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
     const book = await Book.findById(req.params.id)
 
     if (!book)
-        return next(new NotFound());
+        return next(new NotFound({message: 'Book not exist'}));
 
     res.status(200).send(book)
 }
@@ -28,13 +29,16 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
             }
         })
 
-        
-
         res.status(200).send('Inserted successfully');
-    } catch (e) {
-        console.log(e)
-        return next(new BadRequest({}));
+
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const message = Object.values(error.errors).map(value => value.message).toString();
+            next(new BadRequest({message: message}));
+        }
     }
+
+    fs.unlink(file.path, err => console.log(err));
 }
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
