@@ -2,7 +2,6 @@ import {Express, Request, Router} from "express";
 
 import * as bookController from '../controllers/book';
 import {upload} from "../middlewares/upload";
-import * as copyController from "../controllers/copy";
 
 const router = Router();
 
