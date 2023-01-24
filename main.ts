@@ -8,6 +8,7 @@ import bookRouter from './src/routes/book'
 import copyRouter from './src/routes/copy'
 import subscriberRouter from './src/routes/subscriber'
 import borrowRouter from './src/routes/borrow'
+import webhookRouter from "./src/routes/webhook";
 
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/books', bookRouter)
 app.use('/subscribers', subscriberRouter)
 app.use('/borrows', borrowRouter)
 app.use('/copies', copyRouter)
+app.use('/webhook', webhookRouter)
 
 
 app.use((err: CustomError | Error, req: Request, res: Response, next: NextFunction) => {

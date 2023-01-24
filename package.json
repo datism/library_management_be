@@ -21,6 +21,7 @@
   },
   "homepage": "https://gitlab.com/soict-it4409/20221/group6/library_management#readme",
   "dependencies": {
+    "@trycourier/courier": "^4.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
