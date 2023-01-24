@@ -10,6 +10,7 @@ interface IBorrow {
     status: string
 }
 
+// TODO: let's change subscriber, copy to subscriberId, copyId. Modify other schema too.
 const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
     subscriber: {
         type: Schema.Types.ObjectId,
@@ -29,7 +30,7 @@ const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
     endDate: {
         type: Date,
         required: true,
-        default: Date.now
+        default: Date.now // TODO: no need default here. Let's remove
     },
     status: {
         type: String,

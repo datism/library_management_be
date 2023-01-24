@@ -1,12 +1,12 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
-import {Book} from "../models/book";
 import {Copy} from "../models/copy";
 import mongoose from "mongoose";
 import {Subscriber} from "../models/subscriber";
 import {Borrow} from "../models/borrow";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
+    // TODO use query params here
     const borrows = await Borrow.find();
 
     res.status(200).send(borrows)
@@ -15,27 +15,28 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.query)
+        console.log(req.body)
 
-        const copy = await Copy.findById(req.query.copyId);
-        const subscriber = await Subscriber.findById(req.query.subscriberId);
+        const copy = await Copy.findById(req.body.copyId);
+        const subscriber = await Subscriber.findById(req.body.subscriberId);
 
         if (!copy)
-            return next(new NotFound({message: 'Copy not exist'}))
+            return next(new BadRequest({message: 'Copy not exist'}))
 
         if (!subscriber)
-            return next(new NotFound({message: 'Subscriber not exist'}))
+            return next(new BadRequest({message: 'Subscriber not exist'}))
 
         await Borrow.create({
             copy: copy._id,
             subscriber: subscriber._id,
             status: 'inProgress',
-            endDate: Date.now() + 7 * 24 * 60 * 60 * 1000
+            endDate: Date.now() + 7 * 24 * 60 * 60 * 1000 // TODO: Let's make this endDate configurable in the UI
         })
 
         res.status(200).send('Inserted successfully');
 
     } catch (error) {
+        // TODO: no need the catch?
         let message;
 
         if (error instanceof mongoose.Error.ValidationError) {
@@ -69,7 +70,8 @@ export const updateBorrowStatus = async (req: Request, res: Response, next: Next
             const message = Object.values(error.errors).map(value => value.message).toString();
             return next(new BadRequest({message: message}));
         }
-        console.log(error)
+        console.error(error)
+        throw error
     }
 }
 
