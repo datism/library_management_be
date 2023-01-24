@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
+import mongoose from "mongoose";
 import {Book} from "../models/book";
 
 export const getCopyById = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,20 +14,29 @@ export const getCopyById = async (req: Request, res: Response, next: NextFunctio
 }
 
 export const createCopy = async(req: Request, res: Response, next: NextFunction) => {
-    const bookId = req.body.bodyId
-    const book = await Book.findById(bookId)
+    try {
+        if (!await Book.findById(req.body.bookId))
+            return next(new NotFound({message: 'Book not exist'}))
 
-    if (!book)
-        return next(new BadRequest({message:'Book not existed'}));
+        await Copy.create({
+            status: 'available',
+            book: req.body.bookId
+        })
 
-    // TODO: extract status to enums
-    await Copy.create({
-        status: 'available',
-        book: req.body.bookId
-    })
+        res.status(200).send('Inserted successfully');
+    } catch (error) {
+        let message;
 
-    res.status(200).send('Copy created successfully');
+        if (error instanceof mongoose.Error.ValidationError) {
+            message = Object.values(error.errors).map(value => value.message).toString();
+        }
 
+        if (error instanceof mongoose.Error.CastError) {
+            message = error.message
+        }
+
+        return next(new BadRequest({message: message}));
+    }
 }
 
 export const getCopies = async (req: Request, res: Response, next: NextFunction) => {
