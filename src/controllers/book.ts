@@ -3,6 +3,13 @@ import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
 import mongoose from "mongoose";
+const Index = require("flexsearch")
+
+const allowedFilterKeys = [
+    {name: 'type', hasMultipleValue: true},
+    {name: 'author', hasMultipleValue: false},
+    {name: 'title', hasMultipleValue: false},
+]
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
     const book = await Book.findById(req.params.id)
@@ -42,10 +49,49 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
-    // TODO: get by query params
-    const books = await Book.find();
+    // Paginate the result
+    const currentPage = parseInt(<string>req.query.currentPage)
+    const itemsPerPage = parseInt(<string>req.query.itemsPerPage)
+    console.log(req.query)
 
-    res.status(200).send(books)
+    const startItemIndex = (currentPage - 1) * itemsPerPage
+
+    // Get filter from query params
+    const query = req.query
+    const filter: {[k: string]: any} = {};
+    for (let i in allowedFilterKeys) {
+        const key = allowedFilterKeys[i]
+        if (key.name in query) {
+            // If this key can not have multiple value, it can not be an array
+            if (!key.hasMultipleValue && Array.isArray(query[key.name]))
+                continue
+
+            filter[key.name] = query[key.name]
+        }
+    }
+
+    let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
+
+
+    // Let the queried result passed through partial-text search for name field (if included)
+    const index = new Index();
+    for (let book in books) {
+        // @ts-ignore
+        index.add(book['id'], book['name'])
+    }
+
+    let totalBooks = 0
+    // TODO: Implement name search later
+    // if (req.query.title)
+    //     books = index.search(req.query.title, 10)
+    //     totalBooks = books.length
+
+    totalBooks = await Book.count(filter)
+
+    res.status(200).send({
+        totalItems: totalBooks,
+        items: books,
+    })
 }
 
 // TODO: Review later
