@@ -3,6 +3,7 @@ import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
 import mongoose from "mongoose";
+const Index = require("flexsearch")
 
 const allowedFilterKeys = [
     {name: 'type', hasMultipleValue: true},
@@ -69,8 +70,23 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
     }
 
-    const books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
-    const totalBooks = await Book.count(filter)
+    let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
+
+
+    // Let the queried result passed through partial-text search for name field (if included)
+    const index = new Index();
+    for (let book in books) {
+        // @ts-ignore
+        index.add(book['id'], book['name'])
+    }
+
+    let totalBooks = 0
+    // TODO: Implement name search later
+    // if (req.query.title)
+    //     books = index.search(req.query.title, 10)
+    //     totalBooks = books.length
+
+    totalBooks = await Book.count(filter)
 
     res.status(200).send({
         totalItems: totalBooks,
