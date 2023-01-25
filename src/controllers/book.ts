@@ -42,8 +42,16 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
+    // Paginate the result
+
+    const currentPage = parseInt(<string>req.query.currentPage)
+    const itemsPerPage = parseInt(<string>req.query.itemsPerPage)
+    console.log(req.query)
+
+    const startItemIndex = (currentPage - 1) * itemsPerPage
+
     // TODO: get by query params
-    const books = await Book.find();
+    const books = await Book.find().skip(startItemIndex).limit(itemsPerPage);
 
     res.status(200).send(books)
 }
