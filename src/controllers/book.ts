@@ -4,6 +4,12 @@ import {Book} from "../models/book";
 import * as fs from "fs";
 import mongoose from "mongoose";
 
+const allowedFilterKeys = [
+    {name: 'type', hasMultipleValue: true},
+    {name: 'author', hasMultipleValue: false},
+    {name: 'title', hasMultipleValue: false},
+]
+
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
     const book = await Book.findById(req.params.id)
 
@@ -43,17 +49,33 @@ export const createBook = async(req: Request, res: Response, next: NextFunction)
 
 export const getBooks = async (req: Request, res: Response, next: NextFunction) => {
     // Paginate the result
-
     const currentPage = parseInt(<string>req.query.currentPage)
     const itemsPerPage = parseInt(<string>req.query.itemsPerPage)
     console.log(req.query)
 
     const startItemIndex = (currentPage - 1) * itemsPerPage
 
-    // TODO: get by query params
-    const books = await Book.find().skip(startItemIndex).limit(itemsPerPage);
+    // Get filter from query params
+    const query = req.query
+    const filter: {[k: string]: any} = {};
+    for (let i in allowedFilterKeys) {
+        const key = allowedFilterKeys[i]
+        if (key.name in query) {
+            // If this key can not have multiple value, it can not be an array
+            if (!key.hasMultipleValue && Array.isArray(query[key.name]))
+                continue
 
-    res.status(200).send(books)
+            filter[key.name] = query[key.name]
+        }
+    }
+
+    const books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
+    const totalBooks = await Book.count(filter)
+
+    res.status(200).send({
+        totalItems: totalBooks,
+        items: books,
+    })
 }
 
 // TODO: Review later
