@@ -15,8 +15,6 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body)
-
         const copy = await Copy.findById(req.body.copyId);
         const subscriber = await Subscriber.findById(req.body.subscriberId);
 

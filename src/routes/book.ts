@@ -6,7 +6,7 @@ import {upload} from "../middlewares/upload";
 const router = Router();
 
 router.get('', bookController.getBooks);
-router.post('', upload.single('cover'), bookController.createBook);
+router.post('', bookController.createBook);
 
 router.get('/:id', bookController.getBookById);
 router.put('/:id', upload.single('cover'), bookController.updateBook);

@@ -9,7 +9,7 @@ import copyRouter from './src/routes/copy'
 import subscriberRouter from './src/routes/subscriber'
 import borrowRouter from './src/routes/borrow'
 import webhookRouter from "./src/routes/webhook";
-
+import OverdueBorrow from "./src/engines/overdueBorrow";
 
 dotenv.config();
 
@@ -61,3 +61,5 @@ connect.then(() => {
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+OverdueBorrow.execute()
