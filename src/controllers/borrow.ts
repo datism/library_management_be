@@ -67,11 +67,11 @@ export const updateBorrowStatus = async (req: Request, res: Response, next: Next
 
         switch (req.body.status) {
             case 'returned': copyStatus = 'available'; break;
-            case 'overdue': copyStatus = 'pending'; break;
             case 'lost': copyStatus = 'lost'; break;
         }
 
-        await Copy.findByIdAndUpdate(borrow.copy, {status: copyStatus});
+        if (copyStatus)
+            await Copy.findByIdAndUpdate(borrow.copy, {status: copyStatus});
 
         res.status(200).send('Updated successfully')
     } catch (error) {

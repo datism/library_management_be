@@ -10,10 +10,6 @@ interface IBorrow {
     status: string
 }
 
-interface IBorrowMethods {
-    updateStatus(status: string): Promise<void>
-}
-
 // TODO: let's change subscriber, copy to subscriberId, copyId. Modify other schema too.
 const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
     subscriber: {
