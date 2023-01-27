@@ -72,8 +72,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
 
     let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
 
-
-    // Let the queried result passed through partial-text search for name field (if included)
+    // Let the queried result passed through partial-text search for title field (if included)
     const index = new Index();
     for (let book in books) {
         // @ts-ignore
