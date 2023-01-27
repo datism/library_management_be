@@ -22,6 +22,7 @@
   "homepage": "https://gitlab.com/soict-it4409/20221/group6/library_management#readme",
   "dependencies": {
     "@trycourier/courier": "^4.1.0",
+    "@types/node-schedule": "^2.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
@@ -30,7 +31,8 @@
     "flexsearch": "^0.7.31",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.8.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "node-schedule": "^2.1.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

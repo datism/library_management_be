@@ -15,13 +15,11 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body)
-
-        const copy = await Copy.findById(req.body.copyId);
+        const copy = await Copy.findOne({_id: req.body.copyId, status: 'available'});
         const subscriber = await Subscriber.findById(req.body.subscriberId);
 
         if (!copy)
-            return next(new BadRequest({message: 'Copy not exist'}))
+            return next(new BadRequest({message: 'Copy not found'}))
 
         if (!subscriber)
             return next(new BadRequest({message: 'Subscriber not exist'}))
@@ -64,7 +62,18 @@ export const getBorrowById = async (req: Request, res: Response, next: NextFunct
 // TODO: BUG - copy status must be updated too. Need to verify target status
 export const updateBorrowStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await Borrow.findByIdAndUpdate(req.params.id, {status: req.body.status}, {runValidators: true});
+
+        const borrow = await Borrow.findByIdAndUpdate(req.params.id, {status: req.body.status}, {runValidators: true}).orFail();
+
+        let copyStatus;
+
+        switch (req.body.status) {
+            case 'returned': copyStatus = 'available'; break;
+            case 'lost': copyStatus = 'lost'; break;
+        }
+
+        if (copyStatus)
+            await Copy.findByIdAndUpdate(borrow.copy, {status: copyStatus});
 
         res.status(200).send('Updated successfully')
     } catch (error) {

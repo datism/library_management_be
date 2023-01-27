@@ -247,15 +247,16 @@ paths:
         - borrow
       summary: Create a new borrow request
       operationId: addBookRequest
-      parameters:
-        - name: subscriberId
-          in: query
-          schema:
-            type: string
-        - name: copyId
-          in: query
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscriberId:
+                  type: string
+                copyId:
+                  type: string
       responses:
         '200':
           description: Successful operation

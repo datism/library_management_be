@@ -39,4 +39,14 @@ const BorrowSchema: mongoose.Schema<IBorrow> = new mongoose.Schema({
     }
 });
 
+BorrowSchema.pre('save', async function (next) {
+    try {
+        await Copy.findByIdAndUpdate(this.copy, {status: 'borrowed'})
+    } catch (e) {
+        console.log(e)
+    }
+
+    next()
+})
+
 export const Borrow = model<IBorrow>('Borrow', BorrowSchema)
