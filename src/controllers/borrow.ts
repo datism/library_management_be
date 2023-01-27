@@ -3,7 +3,7 @@ import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
 import mongoose from "mongoose";
 import {Subscriber} from "../models/subscriber";
-import {Borrow, updateStatus} from "../models/borrow";
+import {Borrow} from "../models/borrow";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
     // TODO use query params here
@@ -60,7 +60,18 @@ export const getBorrowById = async (req: Request, res: Response, next: NextFunct
 
 export const updateBorrowStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await updateStatus(req.params.id, req.body.status);
+
+        const borrow = await Borrow.findByIdAndUpdate(req.params.id, {status: req.body.status}, {runValidators: true}).orFail();
+
+        let copyStatus;
+
+        switch (req.body.status) {
+            case 'returned': copyStatus = 'available'; break;
+            case 'overdue': copyStatus = 'pending'; break;
+            case 'lost': copyStatus = 'lost'; break;
+        }
+
+        await Copy.findByIdAndUpdate(borrow.copy, {status: copyStatus});
 
         res.status(200).send('Updated successfully')
     } catch (error) {

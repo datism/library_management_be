@@ -54,17 +54,3 @@ BorrowSchema.pre('save', async function (next) {
 })
 
 export const Borrow = model<IBorrow>('Borrow', BorrowSchema)
-
-export async function updateStatus(borrowId: string, status: string): Promise<void> {
-    const borrow = await Borrow.findByIdAndUpdate(borrowId,  {status: status}, {runValidators: true}).orFail();
-
-    let copyStatus;
-
-    switch (borrow.status) {
-        case 'returned': copyStatus = 'available'; break;
-        case 'overdue': copyStatus = 'pending'; break;
-        case 'lost': copyStatus = 'lost'; break;
-    }
-
-    await Copy.findByIdAndUpdate(borrow.copy, {status: copyStatus});
-}
