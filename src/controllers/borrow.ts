@@ -3,7 +3,7 @@ import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
 import mongoose from "mongoose";
 import {Subscriber} from "../models/subscriber";
-import {Borrow} from "../models/borrow";
+import {Borrow, updateStatus} from "../models/borrow";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
     // TODO use query params here
@@ -15,11 +15,11 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        const copy = await Copy.findById(req.body.copyId);
+        const copy = await Copy.findOne({_id: req.body.copyId, status: 'available'});
         const subscriber = await Subscriber.findById(req.body.subscriberId);
 
         if (!copy)
-            return next(new BadRequest({message: 'Copy not exist'}))
+            return next(new BadRequest({message: 'Copy not found'}))
 
         if (!subscriber)
             return next(new BadRequest({message: 'Subscriber not exist'}))
@@ -60,7 +60,7 @@ export const getBorrowById = async (req: Request, res: Response, next: NextFunct
 
 export const updateBorrowStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await Borrow.findByIdAndUpdate(req.params.id, {status: req.body.status}, {runValidators: true});
+        await updateStatus(req.params.id, req.body.status);
 
         res.status(200).send('Updated successfully')
     } catch (error) {
