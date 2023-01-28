@@ -27,6 +27,7 @@ const BookSchema = new Schema<IBook> ({
         required: true,
         enum: ['Art', 'Language', 'Literature', 'Gymnastics', 'Physics', 'Chemistry', 'Biology', 'Math', 'History']
     },
+    author: String,
     publisher: String,
     publishedDate: Date,
     cover: {
