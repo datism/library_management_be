@@ -80,8 +80,17 @@ export const sendBorrowExpiredNotificationEmail = async(borrowId: string) => {
 
     await sendEmail(
         subscriber.email,
-        "Borrow Expired notification",
-        `You have borrowed book ${book.title} and it is going to be expired at ${borrow.endDate.toString()}
-        Please return before that day`,
+        "Overdue notice",
+        `This OVERDUE NOTIFICATION for: ${subscriber.name}
+        
+        ${book.title}
+        This item was due back on ${borrow.endDate.toString()}
+        
+        The following item is now overdue and fine is accruing. 
+        You are incurring a fine of two cents for every day's detention.
+        If you think a mistake has been made, please notify us.
+        
+        Sincerely yours,
+        Library`
     )
 }
