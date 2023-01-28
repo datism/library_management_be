@@ -3,12 +3,11 @@ import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
 import mongoose from "mongoose";
-const Index = require("flexsearch")
+const {Index} = require("flexsearch")
 
 const allowedFilterKeys = [
     {name: 'type', hasMultipleValue: true},
     {name: 'author', hasMultipleValue: false},
-    {name: 'title', hasMultipleValue: false},
 ]
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
@@ -70,22 +69,45 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
     }
 
+    let totalBooks = 0
     let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
+    totalBooks = books.length
 
     // Let the queried result passed through partial-text search for title field (if included)
-    const index = new Index();
-    for (let book in books) {
-        // @ts-ignore
-        index.add(book['id'], book['name'])
+    if (req.query.title) {
+        const index = new Index();
+        const idToItemMapping: {[k: string]: any} = {}
+        for (let idx in books) {
+            const book = books[idx]
+            console.log(book)
+            // @ts-ignore
+            index.add(book['id'], book['title'])
+
+            // Since index.search only return item id, we have to map item id to item to perform search.
+            idToItemMapping[book['id']] = book
+        }
+        const bookIds = index.search(req.query.title)
+        books = bookIds.map((id: string | number) => idToItemMapping[id])
+        totalBooks = bookIds.length
     }
 
-    let totalBooks = 0
-    // TODO: Implement name search later
-    // if (req.query.title)
-    //     books = index.search(req.query.title, 10)
-    //     totalBooks = books.length
+    // Let the queried result passed through partial-text search for author name field (if included)
+    if (req.query.author) {
+        const index = new Index();
+        const idToItemMapping: {[k: string]: any} = {}
+        for (let idx in books) {
+            const book = books[idx]
+            console.log(book)
+            // @ts-ignore
+            index.add(book['id'], book['author'])
 
-    totalBooks = await Book.count(filter)
+            // Since index.search only return item id, we have to map item id to item to perform search.
+            idToItemMapping[book['id']] = book
+        }
+        const bookIds = index.search(req.query.author)
+        books = bookIds.map((id: string | number) => idToItemMapping[id])
+        totalBooks = bookIds.length
+    }
 
     res.status(200).send({
         totalItems: totalBooks,
