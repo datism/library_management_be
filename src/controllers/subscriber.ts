@@ -1,11 +1,32 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest} from "../error";
 import {Subscriber} from "../models/subscriber";
+const {Index} = require("flexsearch")
 
 export const getSubscribers = async (req: Request, res: Response, next: NextFunction) => {
-    const subscribers = await Subscriber.find();
+    let subscribers = await Subscriber.find();
+    let totalSubscribers = subscribers.length
 
-    res.status(200).send(subscribers)
+    // Let the queried result passed through partial-text search for name field (if included)
+    if (req.query.name) {
+        const index = new Index();
+        const idToItemMapping: {[k: string]: any} = {}
+        for (let subscriber of subscribers) {
+
+            index.add(subscriber._id, subscriber.name)
+
+            // Since index.search only return item id, we have to map item id to item to perform search.
+            idToItemMapping[subscriber['id']] = subscriber
+        }
+        const subscriberIds = index.search(req.query.name)
+        subscribers = subscriberIds.map((id: string | number) => idToItemMapping[id])
+        totalSubscribers = subscriberIds.length
+    }
+
+    res.status(200).send({
+        totalItems: totalSubscribers,
+        items: subscribers,
+    })
 }
 
 export const createSubscriber = async(req: Request, res: Response, next: NextFunction) => {

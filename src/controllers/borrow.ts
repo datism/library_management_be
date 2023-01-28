@@ -58,6 +58,8 @@ export const getBorrowById = async (req: Request, res: Response, next: NextFunct
     res.status(200).send(borrow)
 }
 
+
+// TODO: BUG - copy status must be updated too. Need to verify target status
 export const updateBorrowStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
