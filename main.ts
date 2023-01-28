@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import {CustomError, isCustomError} from "./src/error";
+import cors from 'cors'
 import authRouter from './src/routes/auth'
 import bookRouter from './src/routes/book'
 import copyRouter from './src/routes/copy'
@@ -17,6 +18,7 @@ const app: Express = express();
 const port = 8000;
 // const port = process.env.PORT;
 
+app.use(cors())
 app.use(bodyParser.json())
 
 // routes
