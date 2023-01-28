@@ -1,5 +1,6 @@
 import multer from "multer";
 import {Express} from "express";
+import {ValidationError} from "../error"
 
 const storage = multer.diskStorage({
     destination: function (req: Express.Request, file: Express.Multer.File, cb) {
@@ -17,7 +18,9 @@ const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: any) =>
 
         cb(null, true);
     }else{
-        cb(new Error("Image uploaded is not of type jpg/jpeg or png"),false);
+        cb(new ValidationError({
+            message: "Image uploaded is not of type jpg/jpeg or png"
+        }),false);
     }
 };
 
