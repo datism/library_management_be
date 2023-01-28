@@ -9,7 +9,7 @@ interface ISubscriber {
 const SubscriberSchema = new Schema<ISubscriber> ({
     name: { type: String, required: true},
     email: {type: String, required:true, unique: true},
-    phone: {type: String, unique: true}
+    phone: {type: String}
 });
 
 export const Subscriber = model<ISubscriber>('Subscriber', SubscriberSchema)
