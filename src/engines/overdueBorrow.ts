@@ -1,5 +1,6 @@
 import * as schedule from "node-schedule";
 import {Borrow} from "../models/borrow";
+import {sendBorrowExpiredNotificationEmail} from "./emailSending";
 export class OverdueBorrow {
     rule: schedule.RecurrenceRule;
     constructor() {
@@ -17,7 +18,7 @@ export class OverdueBorrow {
                 })
 
                 for (const borrow of borrows) {
-                    //sendBorrowExpiredNotificationEmail(borrow._id.toString()).then()
+                    sendBorrowExpiredNotificationEmail(borrow._id.toString()).then()
                     await Borrow.findByIdAndUpdate(borrow._id, {status: 'overdue'})
                 }
             } catch (e) {
