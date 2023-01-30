@@ -2,7 +2,7 @@ import mongoose, {model, Schema, Types} from "mongoose";
 import {Subscriber} from "./subscriber";
 import {Copy} from "./copy";
 
-interface IBorrow {
+export interface IBorrow {
     subscriber: Types.ObjectId,
     copy: Types.ObjectId,
     startDate: Date,

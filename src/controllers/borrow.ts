@@ -1,13 +1,18 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
-import mongoose from "mongoose";
+import mongoose, {FilterQuery} from "mongoose";
 import {Subscriber} from "../models/subscriber";
-import {Borrow} from "../models/borrow";
+import {Borrow, IBorrow} from "../models/borrow";
 import {sendBorrowCreatedNotificationEmail} from "../engines/emailSending";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
-    const borrows = await Borrow.find({status: req.query.status});
+
+    const filter: FilterQuery<IBorrow> = {};
+    if (req.query.status)
+        filter.status = req.query.status
+
+    const borrows = await Borrow.find(filter);
 
     res.status(200).send(borrows)
 }
