@@ -213,16 +213,15 @@ paths:
     get:
       tags:
         - borrow
-      summary: Get an reader's borrow requests
-      operationId: getBorrowRequestByBorrowerId
+      summary: Get borrow requests
       parameters:
-        - name: subscriberId
+        - name: subscriber
           in: query
           description: 'The name that needs to be fetched.'
           required: false
           schema:
             type: string
-        - name: copyId
+        - name: copy
           in: query
           description: 'The copy that needs to be fetched.'
           schema:
