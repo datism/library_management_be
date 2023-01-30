@@ -15,8 +15,8 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        const copy = await Copy.findOne({_id: req.body.copyId, status: 'available'});
-        const subscriber = await Subscriber.findById(req.body.subscriberId);
+        const copy = await Copy.findOne({_id: req.body.copy, status: 'available'});
+        const subscriber = await Subscriber.findById(req.body.subscriber);
 
         if (!copy)
             return next(new BadRequest({message: 'Copy not found'}))

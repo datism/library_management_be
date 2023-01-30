@@ -253,9 +253,9 @@ paths:
             schema:
               type: object
               properties:
-                subscriberId:
+                subscriber:
                   type: string
-                copyId:
+                copy:
                   type: string
       responses:
         '200':
