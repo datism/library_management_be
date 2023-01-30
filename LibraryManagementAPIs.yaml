@@ -39,7 +39,7 @@ paths:
             schema:
               type: object
               properties:
-                bookId:
+                book:
                   type: string
       responses:
         '200':

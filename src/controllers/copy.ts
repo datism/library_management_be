@@ -16,12 +16,12 @@ export const getCopyById = async (req: Request, res: Response, next: NextFunctio
 
 export const createCopy = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!await Book.findById(req.body.bookId))
+        if (!await Book.findById(req.body.book))
             return next(new NotFound({message: 'Book not exist'}))
 
         await Copy.create({
             status: 'available',
-            book: req.body.bookId
+            book: req.body.book
         })
 
         res.status(200).send('Inserted successfully');
