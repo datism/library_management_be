@@ -4,6 +4,7 @@ import {Copy} from "../models/copy";
 import mongoose from "mongoose";
 import {Subscriber} from "../models/subscriber";
 import {Borrow} from "../models/borrow";
+import {sendBorrowCreatedNotificationEmail} from "../engines/emailSending";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
     const borrows = await Borrow.find({status: req.query.status});
@@ -23,12 +24,14 @@ export const createBorrow = async(req: Request, res: Response, next: NextFunctio
         if (!subscriber)
             return next(new BadRequest({message: 'Subscriber not exist'}))
 
-        await Borrow.create({
+        const borrow = await Borrow.create({
             copy: copy._id,
             subscriber: subscriber._id,
             status: 'inProgress',
             endDate: Date.now() + 7 * 24 * 60 * 60 * 1000 // TODO: Let's make this endDate configurable in the UI
         })
+
+        await sendBorrowCreatedNotificationEmail(borrow._id.toString())
 
         res.status(200).send('Inserted successfully');
 

@@ -51,7 +51,6 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
     // Paginate the result
     const currentPage = parseInt(<string>req.query.currentPage)
     const itemsPerPage = parseInt(<string>req.query.itemsPerPage)
-    console.log(req.query)
 
     const startItemIndex = (currentPage - 1) * itemsPerPage
 
@@ -79,7 +78,6 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         const idToItemMapping: {[k: string]: any} = {}
         for (let idx in books) {
             const book = books[idx]
-            console.log(book)
             // @ts-ignore
             index.add(book['id'], book['title'])
 
@@ -97,7 +95,6 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         const idToItemMapping: {[k: string]: any} = {}
         for (let idx in books) {
             const book = books[idx]
-            console.log(book)
             // @ts-ignore
             index.add(book['id'], book['author'])
 

@@ -6,7 +6,7 @@ import {validationResultMiddleware} from "../schema";
 
 export const router = Router();
 
-router.get(
+router.post(
     '/login',
     checkSchema(AuthSchema as Schema),
     validationResultMiddleware,

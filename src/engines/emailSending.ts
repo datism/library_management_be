@@ -56,7 +56,10 @@ export const sendBorrowCreatedNotificationEmail = async (borrowId: string) => {
     await sendEmail(
         subscriber.email,
         "Borrowed notification",
-        `You have borrowed book ${book.title}`
+        `You have borrowed book ${book.title}. Remember to return it before ${borrow.endDate.toString()}
+    
+        Sincerely yours,
+            Library`
     )
 
 }
