@@ -6,8 +6,7 @@ import {Subscriber} from "../models/subscriber";
 import {Borrow} from "../models/borrow";
 
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
-    // TODO use query params here
-    const borrows = await Borrow.find();
+    const borrows = await Borrow.find({status: req.query.status});
 
     res.status(200).send(borrows)
 }
