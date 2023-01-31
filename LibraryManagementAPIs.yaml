@@ -346,6 +346,24 @@ paths:
         '405':
           description: Invalid input
 
+  /subscribers/{subscriberId}:
+    get:
+      tags:
+        - Subscriber
+      summary: Get subscriber by id
+      parameters:
+        - in: query
+          name: subscriberId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+
   /auth/login:
     post:
       tags:

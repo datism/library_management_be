@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
-import {BadRequest} from "../error";
+import {BadRequest, NotFound} from "../error";
 import {Subscriber} from "../models/subscriber";
+import {Borrow} from "../models/borrow";
 const {Index} = require("flexsearch")
 
 export const getSubscribers = async (req: Request, res: Response, next: NextFunction) => {
@@ -63,4 +64,13 @@ export const createSubscriber = async(req: Request, res: Response, next: NextFun
     });
 
     res.status(200).send('Subscriber created successfully');
+}
+
+export const getSubscriberById = async(req: Request, res: Response, next: NextFunction) => {
+    const subscriber = await Subscriber.findById(req.params.id)
+
+    if (!subscriber)
+        return next(new NotFound({message: 'Subscriber not exist'}));
+
+    res.status(200).send(subscriber)
 }
