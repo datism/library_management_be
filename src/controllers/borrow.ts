@@ -9,6 +9,10 @@ import {sendBorrowCreatedNotificationEmail} from "../engines/emailSending";
 export const getBorrows = async (req: Request, res: Response, next: NextFunction) => {
 
     const filter: FilterQuery<IBorrow> = {};
+    if (req.query.copy)
+        filter.copy = req.query.copy
+    if (req.query.subscriber)
+        filter.subscriber = req.query.subscriber
     if (req.query.status)
         filter.status = req.query.status
 
