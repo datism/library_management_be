@@ -39,6 +39,7 @@ export const CreateBookSchema = {
         in: ["body"],
         errorMessage: "Missing or invalid publisher date",
         isDate: true,
+        optional: true,
     }
     // No need validation for file uploading since it is validated on multer uploading
 }
