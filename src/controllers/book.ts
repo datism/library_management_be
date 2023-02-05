@@ -73,7 +73,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
     }
 
-    let totalBooks = await Book.count(filter);
+    const totalBooks = await Book.count(filter);
     let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
 
     // Let the queried result passed through partial-text search for title field (if included)
@@ -90,7 +90,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
         const bookIds = index.search(req.query.title)
         books = bookIds.map((id: string | number) => idToItemMapping[id])
-        totalBooks = bookIds.length
+        // totalBooks = bookIds.length
     }
 
     // Let the queried result passed through partial-text search for author name field (if included)
@@ -107,7 +107,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
         const bookIds = index.search(req.query.author)
         books = bookIds.map((id: string | number) => idToItemMapping[id])
-        totalBooks = bookIds.length
+        // totalBooks = bookIds.length
     }
 
     res.status(200).send({
