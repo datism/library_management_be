@@ -7,8 +7,7 @@ export interface IBook {
     type: string,
     author: string,
     publisher: string,
-    publishedDate: Date,
-    cover: String,
+    cover: string,
 }
 
 const BookSchema = new Schema<IBook> ({
@@ -26,7 +25,6 @@ const BookSchema = new Schema<IBook> ({
     },
     author: String,
     publisher: String,
-    publishedDate: Date,
     cover: String,
 });
 
