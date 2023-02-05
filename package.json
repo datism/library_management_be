@@ -29,6 +29,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
+    "firebase": "^9.17.1",
+    "firebase-admin": "^11.5.0",
     "flexsearch": "^0.7.31",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.8.1",
