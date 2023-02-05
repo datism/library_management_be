@@ -8,10 +8,7 @@ export interface IBook {
     author: string,
     publisher: string,
     publishedDate: Date,
-    cover: {
-        image: BinaryData,
-        contentType: string,
-    }
+    cover: String,
 }
 
 const BookSchema = new Schema<IBook> ({
@@ -30,10 +27,7 @@ const BookSchema = new Schema<IBook> ({
     author: String,
     publisher: String,
     publishedDate: Date,
-    cover: {
-        image: Buffer,
-        contentType: String,
-    }
+    cover: String,
 });
 
 export const Book = model<IBook>('Book', BookSchema)

@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response} from 'express';
+import {Express, NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Book} from "../models/book";
 import * as fs from "fs";
 import mongoose from "mongoose";
+import {uploadFile} from "../engines/fileUploading";
 const {Index} = require("flexsearch")
 
 const allowedFilterKeys = [
@@ -19,20 +20,24 @@ export const getBookById = async (req: Request, res: Response, next: NextFunctio
     res.status(200).send(book)
 }
 
-// TODO: Review this method later. Currently let's investigate this approach further
 export const createBook = async(req: Request, res: Response, next: NextFunction) => {
-    const file = req.file;
+    const file: Express.Multer.File | undefined = req.file;
 
     if (!file)
         return next(new BadRequest({message:'No cover'}));
 
+    const fileURL = await uploadFile(
+        file,
+        file.filename
+    )
+
+    console.log(fileURL)
+
+
     try {
         await Book.create({
             ...req.body,
-            cover: {
-                image: fs.readFileSync(file.path),
-                contentType: file.mimetype
-            }
+            cover: fileURL
         })
 
         res.status(200).send('Inserted successfully');
@@ -68,9 +73,8 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         }
     }
 
-    let totalBooks = 0
+    let totalBooks = await Book.count(filter);
     let books = await Book.find(filter).skip(startItemIndex).limit(itemsPerPage);
-    totalBooks = books.length
 
     // Let the queried result passed through partial-text search for title field (if included)
     if (req.query.title) {
@@ -118,10 +122,13 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
     const file = req.file;
 
     if (file) {
-        book.cover = {
-            image: fs.readFileSync(file.path),
-            contentType: file.mimetype
-        }
+        const fileURL = await uploadFile(
+            file,
+            file.filename
+        )
+
+        console.log(fileURL)
+        book.cover = fileURL
     }
     try {
         await Book.findByIdAndUpdate(req.params.id, book)

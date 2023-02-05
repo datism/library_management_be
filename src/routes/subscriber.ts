@@ -4,7 +4,6 @@ import {checkSchema, Schema} from "express-validator";
 import {validationResultMiddleware} from "../schema";
 import {CreateSubscriberSchema} from "../schema/subscriber";
 import {RequiredMongoIdSchema} from "../schema/common";
-import * as borrowController from "../controllers/borrow";
 
 const router = Router();
 
