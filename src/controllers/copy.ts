@@ -4,6 +4,7 @@ import {Copy} from "../models/copy";
 import mongoose from "mongoose";
 import {Book} from "../models/book";
 import {Borrow} from "../models/borrow";
+import copy from "../routes/copy";
 
 export const getCopyById = async (req: Request, res: Response, next: NextFunction) => {
     const copy = await Copy.findById(req.params.id)
@@ -19,12 +20,12 @@ export const createCopy = async(req: Request, res: Response, next: NextFunction)
         if (!await Book.findById(req.body.book))
             return next(new NotFound({message: 'Book not exist'}))
 
-        await Copy.create({
+        const copy = await Copy.create({
             status: 'available',
             book: req.body.book
         })
 
-        res.status(200).send('Inserted successfully');
+        res.status(200).send(copy);
     } catch (error) {
         let message;
 
