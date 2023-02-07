@@ -1,10 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
 import {Copy} from "../models/copy";
-import mongoose from "mongoose";
+import mongoose, {Types} from "mongoose";
 import {Book} from "../models/book";
 import {Borrow} from "../models/borrow";
 import copy from "../routes/copy";
+const ObjectId = require('mongoose').Types.ObjectId;
 
 export const getCopyById = async (req: Request, res: Response, next: NextFunction) => {
     const copy = await Copy.findById(req.params.id)
@@ -42,8 +43,12 @@ export const createCopy = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const getCopies = async (req: Request, res: Response, next: NextFunction) => {
-    // TODO use query params here
-    const copies = await Copy.find();
+    const bookId = req.query.book
+    const status = req.query.status
+
+    console.log(bookId)
+
+    const copies = await Copy.find({book: new ObjectId(bookId), status: status});
 
     res.status(200).send(copies)
 }
