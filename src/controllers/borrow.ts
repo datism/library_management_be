@@ -24,11 +24,15 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
 
 export const createBorrow = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        const copy = await Copy.findOne({_id: req.body.copy, status: 'available'});
+        const copy = await Copy.findOne({_id: req.body.copy});
+
         const subscriber = await Subscriber.findById(req.body.subscriber);
 
         if (!copy)
             return next(new BadRequest({message: 'Copy not found'}))
+
+        if (copy.status !== 'available')
+            return next(new BadRequest({message: 'Sách không sẵn sàng để cho mượn. Vui lòng thử sách khác'}))
 
         if (!subscriber)
             return next(new BadRequest({message: 'Subscriber not exist'}))
