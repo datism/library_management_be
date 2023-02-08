@@ -16,7 +16,7 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
     if (req.query.status)
         filter.status = req.query.status
 
-    const borrows = await Borrow.find(filter);
+    const borrows = await Borrow.find(filter).populate('copy').populate('subscriber');
 
     res.status(200).send(borrows)
 }
@@ -65,7 +65,7 @@ export const createBorrow = async(req: Request, res: Response, next: NextFunctio
 }
 
 export const getBorrowById = async (req: Request, res: Response, next: NextFunction) => {
-    const borrow = await Borrow.findById(req.params.id)
+    const borrow = await Borrow.findById(req.params.id).populate('copy').populate('subscriber')
 
     if (!borrow)
         return next(new NotFound({message: 'Book not exist'}));
