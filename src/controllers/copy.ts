@@ -8,7 +8,7 @@ import copy from "../routes/copy";
 const ObjectId = require('mongoose').Types.ObjectId;
 
 export const getCopyById = async (req: Request, res: Response, next: NextFunction) => {
-    const copy = await Copy.findById(req.params.id)
+    const copy = await Copy.findById(req.params.id).populate('book')
 
     if (!copy)
         return next(new NotFound({ message: "Can not delete non-existed book"}));
@@ -25,6 +25,8 @@ export const createCopy = async(req: Request, res: Response, next: NextFunction)
             status: 'available',
             book: req.body.book
         })
+
+        await copy.populate('book');
 
         res.status(200).send(copy);
     } catch (error) {
@@ -48,7 +50,7 @@ export const getCopies = async (req: Request, res: Response, next: NextFunction)
 
     console.log(bookId)
 
-    const copies = await Copy.find({book: new ObjectId(bookId), status: status});
+    const copies = await Copy.find({book: new ObjectId(bookId), status: status}).populate('book');
 
     res.status(200).send(copies)
 }
