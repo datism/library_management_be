@@ -1,9 +1,10 @@
 import {Express, NextFunction, Request, Response} from 'express';
 import {BadRequest, NotFound} from "../error";
-import {Book} from "../models/book";
+import {Book, IBook} from "../models/book";
 import * as fs from "fs";
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import {uploadFile} from "../engines/fileUploading";
+import {Copy} from "../models/copy";
 const {Index} = require("flexsearch")
 
 const allowedFilterKeys = [
@@ -110,9 +111,17 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
         // totalBooks = bookIds.length
     }
 
+    const items: any[] = [];
+    for (const book of books) {
+        items.push({
+           ...book.toObject(),
+           "count": await Copy.find({book: book._id, status: 'available'}).count()
+        });
+    }
+
     res.status(200).send({
         totalItems: totalBooks,
-        items: books,
+        items: items,
     })
 }
 
