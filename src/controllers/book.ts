@@ -115,7 +115,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
     for (const book of books) {
         items.push({
            ...book.toObject(),
-           "count": await Copy.find({book: book._id, status: 'available'}).count()
+           "copyLeft": await Copy.find({book: book._id, status: 'available'}).count()
         });
     }
 
