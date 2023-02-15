@@ -16,7 +16,11 @@ export const getBorrows = async (req: Request, res: Response, next: NextFunction
     if (req.query.status)
         filter.status = req.query.status
 
-    const borrows = await Borrow.find(filter).populate('copy').populate('subscriber');
+    const borrows = await Borrow.find(filter)
+                                .populate([
+                                    {path: 'copy', populate: {path: 'book'}},
+                                    {path: 'subscriber'}
+                                ])
 
     res.status(200).send(borrows)
 }
